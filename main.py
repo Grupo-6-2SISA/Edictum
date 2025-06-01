@@ -30,6 +30,11 @@ def inicializar_aplicacao():
     time.sleep(0.5)
     print(f" APLICACAO INICIALIZADA - DATA E HORA: {data} ")
 
+    print('rodando select')
+    teste = db.executarSelect("SELECT * FROM Rotina WHERE is_ativo = 1")
+    print('resposta na main')
+    for row in teste:
+        print(row)
 
 if __name__ == '__main__':
     main()

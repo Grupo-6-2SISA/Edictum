@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from mysql.connector import connect, Error
+from pathlib import Path
 
 # Arquivo de Configuração do Banco de Dados
 ''' Serve Duas Funções:
@@ -9,7 +10,8 @@ from mysql.connector import connect, Error
  '''
 
 # Carrega as variáveis de ambiente do arquivo .env
-load_dotenv()
+env_path = Path(__file__).parent.parent / "config" / ".env"
+load_dotenv(dotenv_path=env_path)
 
 # Dicionário de Configuração do banco de dados, usado nas duas funções
 config = {
