@@ -1,9 +1,23 @@
+# core/services/email_service.py
+
+"""
+
+falta implementar logs de envio de email, que depende da inclusão da fk_cliente nesta tabela. (kotlin)
+
+"""
+
 import smtplib
 from email.message import EmailMessage
+from dotenv import load_dotenv
+import mimetypes
+import os
+
+# Carregar variáveis do .env
+load_dotenv()
 
 def enviar_email(destinatario: str, assunto: str, corpo: str):
-    remetente = 'marciorjuliao22@gmail.com'
-    senha = 'sua_senha_de_app'  # Use senha de app para Gmail
+    remetente = os.getenv('EMAIL_SENDER')
+    senha = os.getenv('EMAIL_PASSWORD')
 
     msg = EmailMessage()
     msg['Subject'] = assunto
@@ -16,5 +30,39 @@ def enviar_email(destinatario: str, assunto: str, corpo: str):
             smtp.login(remetente, senha)
             smtp.send_message(msg)
         print(f"[EMAIL] Mensagem enviada para {destinatario}")
+    except Exception as e:
+        print(f"[ERRO EMAIL] Falha ao enviar para {destinatario}: {str(e)}")
+
+
+def enviar_email_com_ics(destinatario: str, assunto: str, corpo: str, caminho_ics: str):
+    remetente = os.getenv('EMAIL_SENDER')
+    senha = os.getenv('EMAIL_PASSWORD')
+
+    msg = EmailMessage()
+    msg['Subject'] = assunto
+    msg['From'] = remetente
+    msg['To'] = destinatario
+    msg.set_content(corpo)
+
+    # Ler e anexar o arquivo .ics
+    try:
+        with open(caminho_ics, 'rb') as f:
+            ics_data = f.read()
+
+        tipo_mime, _ = mimetypes.guess_type(caminho_ics)
+        if tipo_mime is None:
+            tipo_mime = 'application/octet-stream'
+        maintype, subtype = tipo_mime.split('/')
+
+        msg.add_attachment(ics_data, maintype=maintype, subtype=subtype, filename=os.path.basename(caminho_ics))
+    except Exception as e:
+        print(f"[ERRO] Falha ao anexar o arquivo .ics: {str(e)}")
+        return
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(remetente, senha)
+            smtp.send_message(msg)
+        print(f"[EMAIL] Mensagem enviada para {destinatario} com anexo .ics")
     except Exception as e:
         print(f"[ERRO EMAIL] Falha ao enviar para {destinatario}: {str(e)}")
