@@ -56,8 +56,8 @@ def executarQuery(script):
 
 def executarSelect(script):
     """
-    Função responsável por executar uma query SELECT no banco de dados.
-    Recebe uma query SQL como parâmetro e retorna os resultados.
+    Executa uma query SELECT e retorna os resultados como uma lista de dicionários.
+    Cada dicionário representa uma linha, com os nomes das colunas como chaves.
     """
     db = None
     cursor = None
@@ -73,7 +73,10 @@ def executarSelect(script):
             if not prod:
                 print(f"Executando o select: {script}")
             cursor.execute(script)
-            rows = cursor.fetchall()
+
+            colunas = [desc[0] for desc in cursor.description]  # nomes das colunas
+            rows = [dict(zip(colunas, row)) for row in cursor.fetchall()]  # monta lista de dicionários
+
             if not prod:
                 for row in rows:
                     print(row)

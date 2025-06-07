@@ -2,8 +2,9 @@
 import importlib
 import time
 from pathlib import Path
-
-def execute_task(task_name: str) -> bool:
+from core import database as db
+from datetime import datetime
+def execute_task(task_name: str, rotina: dict) -> bool:
     """
     Carrega e executa uma tarefa pelo nome
 
@@ -24,6 +25,8 @@ def execute_task(task_name: str) -> bool:
         print(f"[ERRO] Arquivo de tarefa não encontrado: {task_name}.py")
         return False
 
+    start_time = None
+
     try:
         # 3. Importação dinâmica
         module = importlib.import_module(f"tasks.{task_name}")
@@ -34,14 +37,35 @@ def execute_task(task_name: str) -> bool:
             return False
 
         # 5. Execução cronometrada
-        start_time = time.time()
+
+        start_time = datetime.now()
+
+        db.executarQuery(
+            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, status_execucao) "
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Iniciando execução da tarefa {task_name}')"
+        )
+
         print(f"[INFO] Iniciando execução da tarefa: {task_name}")
         module.run()  # Função principal da tarefa
-        duration = time.time() - start_time
+        end_time = datetime.now()
 
-        print(f"[INFO] Tarefa {task_name} executada com sucesso em {duration:.2f}s")
+        db.executarQuery(
+            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao) "
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', '{end_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Tarefa {task_name} executada com sucesso')"
+        )
+
+        duration = (end_time - start_time).total_seconds()
+        print(f"[INFO] Tarefa {task_name} executada com sucesso em {duration:.3f}s")
         return True
 
     except Exception as e:
-        print(f"[ERRO CRÍTICO] Falha na execução da tarefa {task_name}: {str(e)}")
-        return False
+        end_time = datetime.now()
+        ini_exec = start_time.strftime('%Y-%m-%d %H:%M:%S') if start_time else end_time.strftime('%Y-%m-%d %H:%M:%S')
+        fim_exec = end_time.strftime('%Y-%m-%d %H:%M:%S')
+        erro_msg = str(e).replace("'", "''")
+        db.executarQuery(
+            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao) "
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{ini_exec}', '{fim_exec}', 'Erro na tarefa {task_name}: {erro_msg}')"
+        )
+        print(f"[ERRO CRÍTICO] Falha na execução da tarefa {task_name}: {erro_msg}")
+    return False

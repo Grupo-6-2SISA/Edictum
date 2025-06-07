@@ -2,6 +2,7 @@ import time
 from contextlib import nullcontext
 from gettext import NullTranslations
 from core import database as db
+from core import task_loader as tl
 import datetime as dt
 import os
 
@@ -11,7 +12,6 @@ def main():
     inicializar_aplicacao()
 
 def inicializar_aplicacao():
-    data = dt.datetime.now()
 
     print("""
     
@@ -27,14 +27,23 @@ def inicializar_aplicacao():
         8 888888888888 8 888888888P'       8 8888     `8888888P'       8 8888          `Y88888P' ,8'         `         `8.`8888.
 
     """)
-    time.sleep(0.5)
-    print(f" APLICACAO INICIALIZADA - DATA E HORA: {data} ")
+    print(f"\n[INFO] APLICACAO INICIALIZADA - DATA E HORA: {dt.datetime.now()} ")
 
     print('rodando select')
-    teste = db.executarSelect("SELECT * FROM Rotina WHERE is_ativo = 1")
-    print('resposta na main')
-    for row in teste:
-        print(row)
+    rotinas = db.executarSelect("SELECT * FROM Rotina")
+
+    for rotina in rotinas:
+
+        if rotina['is_ativo'] != 1:
+            db.executarQuery(
+                f"INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao)"
+                f" VALUES ({rotina['id_rotina']}, DEFAULT, 1, NOW(), NOW(), 'Rotina Bloqueada, não executada.')"
+            )
+            continue
+
+        tl.execute_task(rotina['rotina_chamada'], rotina)
+
+    print(f"\n[INFO] APLICACAO FINALIZADA - DATA E HORA: {dt.datetime.now()} ")
 
 if __name__ == '__main__':
     main()
