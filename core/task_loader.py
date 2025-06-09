@@ -41,8 +41,8 @@ def execute_task(task_name: str, rotina: dict) -> bool:
         start_time = datetime.now()
 
         db.executarQuery(
-            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, status_execucao) "
-            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Iniciando execução da tarefa {task_name}')"
+            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, status_execucao, funcionou) "
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Iniciando execução da tarefa {task_name}', null)"
         )
 
         print(f"[INFO] Iniciando execução da tarefa: {task_name}")
@@ -50,8 +50,8 @@ def execute_task(task_name: str, rotina: dict) -> bool:
         end_time = datetime.now()
 
         db.executarQuery(
-            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao) "
-            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', '{end_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Tarefa {task_name} executada com sucesso')"
+            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao, funcionou) "
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', '{end_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Tarefa {task_name} executada com sucesso', 1)"
         )
 
         duration = (end_time - start_time).total_seconds()
@@ -64,8 +64,8 @@ def execute_task(task_name: str, rotina: dict) -> bool:
         fim_exec = end_time.strftime('%Y-%m-%d %H:%M:%S')
         erro_msg = str(e).replace("'", "''")
         db.executarQuery(
-            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao) "
-            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{ini_exec}', '{fim_exec}', 'Erro na tarefa {task_name}: {erro_msg}')"
+            "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao, funcionou) "
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{ini_exec}', '{fim_exec}', 'Erro na tarefa {task_name}: {erro_msg}', 0)"
         )
         print(f"[ERRO CRÍTICO] Falha na execução da tarefa {task_name}: {erro_msg}")
     return False
