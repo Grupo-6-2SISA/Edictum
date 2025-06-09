@@ -19,8 +19,16 @@ def run():
             
             Orlando Matos Advogados Associados
             """
+            try:
+                es.enviar_email(destinatario=email, assunto="Feliz Aniversário!", corpo=mensagem, bcc=[os.getenv('EMAIL_MONITOR')])
+                db.executarQuery("INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                                 f"(null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de aniversário para {nome} ({email})')")
+            except Exception as e:
+                print(f"[ERRO] Falha ao enviar email para {nome} ({email}): {str(e)}")
+                db.executarQuery("INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                                 f"(null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de aniversário para {nome} ({email}): {str(e)}')")
+                continue
 
-            es.enviar_email(destinatario=email, assunto="Feliz Aniversário!", corpo=mensagem, bcc=[os.getenv('EMAIL_MONITOR')])
         return "Aniversários enviados com sucesso!"
     else:
         print("[INFO] Nenhum aniversariante encontrado para hoje.")
