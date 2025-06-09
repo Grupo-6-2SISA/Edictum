@@ -46,12 +46,12 @@ def execute_task(task_name: str, rotina: dict) -> bool:
         )
 
         print(f"[INFO] Iniciando execução da tarefa: {task_name}")
-        module.run()  # Função principal da tarefa
+        retorno = module.run()  # Função principal da tarefa
         end_time = datetime.now()
 
         db.executarQuery(
             "INSERT INTO log_execucao_rotina (fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao, funcionou) "
-            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', '{end_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Tarefa {task_name} executada com sucesso', 1)"
+            f"VALUES ({rotina['id_rotina']}, DEFAULT, 0, '{start_time.strftime('%Y-%m-%d %H:%M:%S')}', '{end_time.strftime('%Y-%m-%d %H:%M:%S')}', 'Tarefa {task_name} executada com sucesso: {retorno}', 1)"
         )
 
         duration = (end_time - start_time).total_seconds()

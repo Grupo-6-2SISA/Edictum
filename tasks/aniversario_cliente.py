@@ -2,9 +2,7 @@ import os
 from core import database as db
 from core.services import email_service as es
 def run():
-    aniversariantes = db.executarSelect("SELECT * FROM cliente WHERE DATE_FORMAT(data_nascimento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d');")
-
-    aniversariantes = [x for x in aniversariantes if x['cnpj'] is None]
+    aniversariantes = db.executarSelect("SELECT * FROM cliente WHERE DATE_FORMAT(data_nascimento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') AND cnpj IS NULL")
 
     if aniversariantes:
         for cliente in aniversariantes:
@@ -23,8 +21,7 @@ def run():
             """
 
             es.enviar_email(destinatario=email, assunto="Feliz Aniversário!", corpo=mensagem, bcc=[os.getenv('EMAIL_MONITOR')])
-
-
+        return "Aniversários enviados com sucesso!"
     else:
         print("[INFO] Nenhum aniversariante encontrado para hoje.")
-        return
+        return "Nenhum aniversariante encontrado para hoje."

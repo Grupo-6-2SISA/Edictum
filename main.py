@@ -29,7 +29,6 @@ def inicializar_aplicacao():
     """)
     print(f"\n[INFO] APLICACAO INICIALIZADA - DATA E HORA: {dt.datetime.now()} ")
 
-    print('rodando select')
     rotinas = db.executarSelect("SELECT * FROM Rotina")
 
     for rotina in rotinas:

@@ -11,24 +11,28 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 import mimetypes
 import os
+from typing import Union
 
 # Carregar variáveis do .env
 load_dotenv()
 
-def enviar_email(destinatario: str, assunto: str, corpo: str, cc: list[str] = None, bcc: list[str] = None):
+def enviar_email(destinatario: Union[str, list[str]], assunto: str, corpo: str, cc: list[str] = None, bcc: list[str] = None):
     remetente = os.getenv('EMAIL_SENDER')
     senha = os.getenv('EMAIL_PASSWORD')
+
+    # Normaliza para lista, mesmo que seja apenas uma string
+    destinatario = [destinatario] if isinstance(destinatario, str) else destinatario
 
     msg = EmailMessage()
     msg['Subject'] = assunto
     msg['From'] = remetente
-    msg['To'] = destinatario
+    msg['To'] = ', '.join(destinatario)
 
     if cc:
         msg['Cc'] = ', '.join(cc)
 
     # Cópia oculta (Bcc) não vai no header, só no envelope
-    destinatarios_totais = [destinatario] + (cc or []) + (bcc or [])
+    destinatarios_totais = destinatario + (cc or []) + (bcc or [])
 
     msg.set_content(corpo)
 
