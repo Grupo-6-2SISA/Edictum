@@ -1,5 +1,5 @@
 python-dotenv
 mysql-connector-python
 requests
-ics
+#ics
 twilio

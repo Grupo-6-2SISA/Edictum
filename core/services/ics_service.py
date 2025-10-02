@@ -1,3 +1,6 @@
+# MÓDULO DESATIVADO
+
+"""
 import os
 from ics import Calendar, Event
 from datetime import timedelta
@@ -22,3 +25,4 @@ def criar_arquivo_ics(titulo, descricao, inicio, duracao_minutos, local, nome_ar
         f.writelines(c)
 
     return caminho_arquivo
+"""

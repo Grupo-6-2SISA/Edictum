@@ -4,7 +4,7 @@ import datetime as dt
 
 def main():
     exibir_banner()
-    registrar_inicio_aplicacao()
+    print(f"\n[INFO] APLICACAO INICIALIZADA - DATA E HORA: {dt.datetime.now()} ")
 
     rotinas = obter_rotinas_agendadas()
 
@@ -13,7 +13,7 @@ def main():
     else:
         executar_rotinas(rotinas)
 
-    registrar_fim_aplicacao()
+    print(f"\n[INFO] APLICACAO FINALIZADA - DATA E HORA: {dt.datetime.now()} ")
 
 def exibir_banner():
     print("""
@@ -31,16 +31,11 @@ def exibir_banner():
 
     """)
 
-def registrar_inicio_aplicacao():
-    print(f"\n[INFO] APLICACAO INICIALIZADA - DATA E HORA: {dt.datetime.now()} ")
-
-def registrar_fim_aplicacao():
-    print(f"\n[INFO] APLICACAO FINALIZADA - DATA E HORA: {dt.datetime.now()} ")
 
 def obter_rotinas_agendadas():
     agora = dt.datetime.now()
     minuto_inicio = agora.replace(second=0, microsecond=0)
-    minuto_fim = minuto_inicio + dt.timedelta(minutes=1)
+    minuto_fim = minuto_inicio + dt.timedelta(minutes=3)
 
     query = f"""
         SELECT *
@@ -67,7 +62,7 @@ def marcar_execucao(rotina_id):
 
 def executar_rotinas(rotinas):
     for rotina in rotinas:
-        if rotina.get('is_ativo') != 1:
+        if rotina.get('is_ativo') < 1:
             registrar_rotina_bloqueada(rotina)
             continue
 
