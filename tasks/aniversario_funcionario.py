@@ -4,7 +4,29 @@ from core.services import email_service as es
 from datetime import datetime
 
 def run():
-    aniversariantes = db.executarSelect("SELECT *, CASE WHEN DATE_FORMAT(data_nascimento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') THEN 1 ELSE 0 END AS eh_aniversario_hoje FROM cliente WHERE DATE_FORMAT(data_nascimento, '%m-%d') BETWEEN DATE_FORMAT(CURDATE(), '%m-%d') AND DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 7 DAY), '%m-%d') AND cnpj IS NULL")
+    aniversariantes = db.executarSelect("""
+    SELECT *,
+           CASE 
+               WHEN DATE_FORMAT(data_nascimento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') 
+                   THEN 0
+               ELSE DATEDIFF(
+                    STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', DATE_FORMAT(data_nascimento, '%m-%d')), '%Y-%m-%d'),
+                    CURDATE()
+               )
+           END AS dias_para_aniversario
+    FROM cliente
+    WHERE cnpj IS NULL
+      AND (
+            DATEDIFF(
+                STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', DATE_FORMAT(data_nascimento, '%m-%d')), '%Y-%m-%d'),
+                CURDATE()
+            ) = 0  -- aniversário hoje
+         OR DATEDIFF(
+                STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', DATE_FORMAT(data_nascimento, '%m-%d')), '%Y-%m-%d'),
+                CURDATE()
+            ) = 7  -- aniversário em 7 dias
+      );
+                                        """)
 
     emails = db.executarSelect("SELECT email FROM usuario WHERE is_ativo = 1 AND email IS NOT NULL")
     emails = [email['email'] for email in emails]  # Extrai os emails em uma lista

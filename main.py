@@ -68,7 +68,7 @@ def executar_rotinas(rotinas):
 
         tl.execute_task(rotina['rotina_chamada'], rotina)
         marcar_execucao(rotina['id_rotina'])
-        logar_execucao_sucesso(rotina['id_rotina'])
+        logar_execucao(rotina['id_rotina'])
 
 def registrar_rotina_bloqueada(rotina):
     db.executarQuery(
@@ -77,11 +77,11 @@ def registrar_rotina_bloqueada(rotina):
         f"VALUES ({rotina['id_rotina']}, DEFAULT, 1, NOW(), NOW(), 'Rotina Bloqueada, não executada.')"
     )
 
-def logar_execucao_sucesso(rotina_id):
+def logar_execucao(rotina_id):
     db.executarQuery(
         "INSERT INTO log_execucao_rotina "
         "(fk_rotina, id_log_execucao_rotina, is_bloqueado, data_hora_ini_execucao, data_hora_fim_execucao, status_execucao) "
-        f"VALUES ({rotina_id}, DEFAULT, 0, NOW(), NOW(), 'Execução concluída com sucesso.')"
+        f"VALUES ({rotina_id}, DEFAULT, 0, NOW(), NOW(), 'Execução concluída.')"
     )
 
 

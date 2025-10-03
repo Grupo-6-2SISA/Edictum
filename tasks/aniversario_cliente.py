@@ -8,7 +8,7 @@ def run():
         for cliente in aniversariantes:
             nome = cliente['nome']
             email = cliente['email']
-            mensagem = mensagem = f"""
+            mensagem = f"""
             Prezado(a) {nome},
             
             Em nome de toda a equipe do escritório Orlando Matos Advogados Associados, queremos lhe desejar um feliz aniversário!
@@ -20,7 +20,7 @@ def run():
             Orlando Matos Advogados Associados
             """
             try:
-                es.enviar_email(destinatario=email, assunto="Feliz Aniversário!", corpo=mensagem, bcc=[os.getenv('EMAIL_MONITOR')])
+                es.enviar_email(destinatario=email, assunto="Feliz Aniversário! | Orlando Matos Advogados Associados", corpo=mensagem, bcc=[os.getenv('EMAIL_MONITOR')])
                 db.executarQuery("INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
                                  f"(null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de aniversário para {nome} ({email})')")
             except Exception as e:
@@ -29,7 +29,7 @@ def run():
                                  f"(null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de aniversário para {nome} ({email}): {str(e)}')")
                 continue
 
-        return "Aniversários enviados com sucesso!"
+        return f"Aniversários enviados com sucesso! Quantidade: {len(aniversariantes)}"
     else:
         print("[INFO] Nenhum aniversariante encontrado para hoje.")
         return "Nenhum aniversariante encontrado para hoje."
