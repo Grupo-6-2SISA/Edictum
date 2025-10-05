@@ -1,6 +1,7 @@
 from core import database as db
 from core import task_loader as tl
 import datetime as dt
+import os
 
 def main():
     exibir_banner()

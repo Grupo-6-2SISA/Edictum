@@ -8,6 +8,11 @@ def run():
     SELECT *,
            CASE 
                WHEN DATE_FORMAT(data_nascimento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') 
+                   THEN 1
+               ELSE 0
+           END AS eh_aniversario_hoje,
+           CASE 
+               WHEN DATE_FORMAT(data_nascimento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') 
                    THEN 0
                ELSE DATEDIFF(
                     STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', DATE_FORMAT(data_nascimento, '%m-%d')), '%Y-%m-%d'),
