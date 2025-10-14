@@ -62,23 +62,23 @@ def run():
                 es.enviar_email(destinatario=email, assunto="Agradecemos a Indicação! | Orlando Matos Advogados Associados",
                                 corpo=mensagem_email, bcc=[os.getenv('EMAIL_MONITOR')])
                 db.executarQuery(
-                    "INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                    f"(null, {dado['id_indicador']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de agradecimento de indicacao para {nome_indicador} ({email})')")
+                    "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                    f"(7, null, {dado['id_indicador']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de agradecimento de indicacao para {nome_indicador} ({email})')")
             except Exception as e:
                 print(f"[ERRO] Falha ao enviar email para {nome_indicador} ({email}): {str(e)}")
                 db.executarQuery(
-                    "INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                    f"(null, {dado['id_indicador']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de agradecimento de indicacao para {nome_indicador} ({email}): {str(e)}')")
+                    "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                    f"(7, null, {dado['id_indicador']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de agradecimento de indicacao para {nome_indicador} ({email}): {str(e)}')")
             try:
                 sms.enviar_sms(mensagem=mensagem_sms, destinatario=telefone)
                 db.executarQuery(
-                    "INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                    f"(null, {dado['id_indicador']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar sms de agradecimento de indicacao para {nome_indicador} ({telefone})')")
+                    "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                    f"(7, null, {dado['id_indicador']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar sms de agradecimento de indicacao para {nome_indicador} ({telefone})')")
             except Exception as e:
                 print(f"[ERRO] Falha ao enviar email para {nome_indicador} ({email}): {str(e)}")
                 db.executarQuery(
-                    "INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                    f"(null, {dado['id_indicador']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar sms de agradecimento de indicacao para {nome_indicador} ({telefone}): {str(e)}')")
+                    "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                    f"(7, null, {dado['id_indicador']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar sms de agradecimento de indicacao para {nome_indicador} ({telefone}): {str(e)}')")
             continue
 
         return f"Agradecimentos de Indicacao enviados com sucesso! Quantidade: {len(dados)}"

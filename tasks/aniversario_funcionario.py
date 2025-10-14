@@ -71,12 +71,12 @@ def run():
                 """
             try:
                 es.enviar_email(destinatario=email, assunto=assunto, corpo=mensagem, bcc=[os.getenv('EMAIL_MONITOR')])
-                db.executarQuery("INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                                 f"(null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de lembrete de aniversário para {nome_cliente} para os funcionarios')")
+                db.executarQuery("INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                                 f"(2, null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de lembrete de aniversário para {nome_cliente} para os funcionarios')")
             except Exception as e:
                 print(f"[ERRO] Falha ao enviar email para funcionarios, cliente: {nome_cliente} ({emails}): {str(e)}")
-                db.executarQuery("INSERT INTO log_envio_lembrete (fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                                 f"(null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de lembrete de aniversário para {nome_cliente} para os funcionarios: {str(e)}')")
+                db.executarQuery("INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
+                                 f"(2, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de lembrete de aniversário para {nome_cliente} para os funcionarios: {str(e)}')")
                 continue
     else:
         print("[INFO] Nenhum aniversariante encontrado para hoje.")
