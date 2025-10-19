@@ -62,4 +62,4 @@ def enviar_sms(mensagem: str, destinatario: str):
 
     except Exception as e:
         print(f"[ERRO SMS] Falha ao enviar SMS para {destinatario}: {str(e)}")
-        return None
+        raise

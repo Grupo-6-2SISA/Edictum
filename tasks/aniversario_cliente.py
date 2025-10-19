@@ -29,18 +29,20 @@ def run():
                                  f"(1, null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de aniversário para {nome} ({email})')")
             except Exception as e:
                 print(f"[ERRO] Falha ao enviar email para {nome} ({email}): {str(e)}")
+                erro_sql = str(e).replace("'", "''")
                 db.executarQuery("INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                                 f"(1, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de aniversário para {nome} ({email}): {str(e)}')")
+                                 f"(1, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de aniversário para {nome} ({email}): {str(erro_sql)}')")
             try:
                 sms.enviar_sms(mensagem=mensagem_sms ,destinatario=telefone)
                 db.executarQuery(
                     "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
                     f"(1, null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar sms de aniversário para {nome} ({telefone})')")
             except Exception as e:
-                print(f"[ERRO] Falha ao enviar email para {nome} ({email}): {str(e)}")
+                print(f"[ERRO] Falha ao enviar SMS para {nome} ({telefone}): {str(e)}")
+                erro_sql = str(e).replace("'", "''")
                 db.executarQuery(
                     "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                    f"(1, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar sms de aniversário para {nome} ({telefone}): {str(e)}')")
+                    f"(1, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar sms de aniversário para {nome} ({telefone}): {str(erro_sql)}')")
             continue
 
         return f"Aniversários enviados com sucesso! Quantidade: {len(aniversariantes)}"
