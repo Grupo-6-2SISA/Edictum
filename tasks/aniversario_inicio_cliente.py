@@ -43,12 +43,12 @@ def run():
             )
             db.executarQuery(
                 "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                f"(4, null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de 1 ano de associação para {nome_cliente}')"
+                f"(6, null, {cliente['id_cliente']}, null, null, 1, DEFAULT, NOW(), 'Sucesso ao enviar email de 1 ano de associação para {nome_cliente}')"
             )
         except Exception as e:
             print(f"[ERRO] Falha ao enviar email para cliente: {nome_cliente}: {str(e)}")
             erro_sql = str(e).replace("'", "''")
             db.executarQuery(
                 "INSERT INTO log_envio_lembrete (fk_tipo_lembrete, fk_atendimento, fk_cliente, fk_conta, fk_nota_fiscal, funcionou, id_log_envio_lembrete, data_hora_criacao, mensagem) VALUES "
-                f"(4, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de 1 ano de associação para {nome_cliente}: {erro_sql}')"
+                f"(6, null, {cliente['id_cliente']}, null, null, 0, DEFAULT, NOW(), 'Falha ao enviar email de 1 ano de associação para {nome_cliente}: {erro_sql}')"
             )
