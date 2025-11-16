@@ -11,6 +11,7 @@ def run():
         WHERE a.should_enviar_email = 1
           AND u.is_ativo = 1
           AND u.email IS NOT NULL
+          AND DATE(a.data_inicio) = DATE(NOW());
     """)
 
     if not atendimentos:
@@ -18,15 +19,13 @@ def run():
         return
 
     for atendimento in atendimentos:
-        assunto = f"Atendimento pendente: {atendimento['descricao']}"
+        assunto = f"Atendimento hoje: {atendimento['nome_cliente']}"
         mensagem = f"""
-        Prezado(a) colaborador(a),
+        Prezado(a) cliente,
 
-        O atendimento '{atendimento['descricao']}' para o cliente {atendimento['nome_cliente']} está pendente.
+        Você tem um atendimento agendado para hoje!
 
         Data de início: {atendimento['data_inicio'].strftime('%d/%m/%Y %H:%M')}
-        Data de vencimento: {atendimento['data_vencimento'].strftime('%d/%m/%Y %H:%M')}
-        Valor: R$ {atendimento['valor']:.2f}
 
         Atenciosamente,
         Equipe Orlando Matos Advogados Associados

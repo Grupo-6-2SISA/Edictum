@@ -4,10 +4,14 @@ from core.services import email_service as es
 
 def run():
     atendimentos = db.executarSelect("""
-        SELECT a.*, c.nome AS nome_cliente
+        SELECT a.*, u.email, c.nome AS nome_cliente
         FROM atendimento a
+        JOIN usuario u ON a.fk_usuario = u.id_usuario
         JOIN cliente c ON a.fk_cliente = c.id_cliente
         WHERE a.should_enviar_email = 1
+          AND u.is_ativo = 1
+          AND u.email IS NOT NULL
+          AND DATE(a.data_inicio) = DATE(NOW());
     """)
 
     emails_funcionarios = db.executarSelect("SELECT email FROM usuario WHERE is_ativo = 1 AND email IS NOT NULL")
@@ -26,7 +30,6 @@ def run():
 
         Data de início: {atendimento['data_inicio'].strftime('%d/%m/%Y %H:%M')}
         Data de vencimento: {atendimento['data_vencimento'].strftime('%d/%m/%Y %H:%M')}
-        Valor: R$ {atendimento['valor']:.2f}
 
         Atenciosamente,
         Equipe Orlando Matos Advogados Associados
